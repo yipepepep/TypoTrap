@@ -17,19 +17,23 @@ interface DomainPair {
   selectedDomain: ExampleDomain | null;
 }
 
+type ApiResponse = {
+  domains: ExampleDomain[];
+};
+
 const InteractiveExample = ({ onStartQuiz }: InteractiveExampleProps) => {
   const [examplePairs, setExamplePairs] = useState<DomainPair[]>([]);
   const [allAnswered, setAllAnswered] = useState(false);
 
   // Fetch example domains
-  const { data, isLoading } = useQuery({
+  const { data, isLoading } = useQuery<ApiResponse>({
     queryKey: ['/api/example-domains']
   });
 
   // Process the domains data when it's available
   useEffect(() => {
-    if (data && typeof data === 'object' && data !== null && 'domains' in data && Array.isArray((data as any).domains)) {
-      const domains = (data as any).domains as ExampleDomain[];
+    if (data?.domains && Array.isArray(data.domains)) {
+      const domains = data.domains;
       console.log("Domains data loaded:", domains.length, "domains");
       
       // Group domains into pairs (legitimate and typosquatted)

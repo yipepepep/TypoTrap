@@ -10,19 +10,24 @@ import { type QuizQuestion } from "@shared/schema";
 
 type TrainingSection = "intro" | "example" | "quiz" | "results";
 
+type QuestionsApiResponse = {
+  questions: QuizQuestion[];
+};
+
 const TrainingApp = () => {
-  const [currentSection, setCurrentSection] = useState<TrainingSection>("intro");
-  const [progress, setProgress] = useState(0);
+  // Start directly with the quiz section for immediate testing
+  const [currentSection, setCurrentSection] = useState<TrainingSection>("quiz");
+  const [progress, setProgress] = useState(40);
   const [score, setScore] = useState(0);
   const [userAnswers, setUserAnswers] = useState<number[]>([]);
 
   // Fetch quiz questions
-  const { data, isLoading, error } = useQuery({
+  const { data, isLoading, error } = useQuery<QuestionsApiResponse>({
     queryKey: ['/api/quiz-questions'],
     staleTime: Infinity, // Don't refetch questions
   });
 
-  const questions = data?.questions as QuizQuestion[] || [];
+  const questions = data?.questions || [];
 
   const handleStartTraining = () => {
     setCurrentSection("example");
