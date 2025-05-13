@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { CheckCircle, XCircle, HelpCircle } from "lucide-react";
@@ -23,9 +23,14 @@ const InteractiveExample = ({ onStartQuiz }: InteractiveExampleProps) => {
 
   // Fetch example domains
   const { data, isLoading } = useQuery({
-    queryKey: ['/api/example-domains'],
-    onSuccess: (data) => {
-      const domains = data?.domains as ExampleDomain[] || [];
+    queryKey: ['/api/example-domains']
+  });
+
+  // Process the domains data when it's available
+  useEffect(() => {
+    if (data && typeof data === 'object' && data !== null && 'domains' in data && Array.isArray((data as any).domains)) {
+      const domains = (data as any).domains as ExampleDomain[];
+      console.log("Domains data loaded:", domains.length, "domains");
       
       // Group domains into pairs (legitimate and typosquatted)
       const pairs: DomainPair[] = [];
@@ -34,7 +39,7 @@ const InteractiveExample = ({ onStartQuiz }: InteractiveExampleProps) => {
         if (i + 1 < domains.length) {
           pairs.push({
             id: i / 2 + 1,
-            domains: [domains[i], domains[i+1]],
+            domains: [domains[i], domains[i+1]] as [ExampleDomain, ExampleDomain],
             answered: false,
             selectedDomain: null
           });
@@ -43,7 +48,7 @@ const InteractiveExample = ({ onStartQuiz }: InteractiveExampleProps) => {
       
       setExamplePairs(pairs);
     }
-  });
+  }, [data]);
 
   const handleDomainSelect = (pairIndex: number, domain: ExampleDomain) => {
     const updatedPairs = [...examplePairs];
@@ -163,7 +168,6 @@ const InteractiveExample = ({ onStartQuiz }: InteractiveExampleProps) => {
             <Button
               onClick={onStartQuiz}
               className={`py-3 px-6 ${allAnswered ? 'animate-pulse' : ''}`}
-              disabled={examplePairs.length === 0}
             >
               Start Quiz <HelpCircle className="ml-2 h-4 w-4" />
             </Button>
