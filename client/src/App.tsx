@@ -8,7 +8,7 @@ import TrainingApp from "@/pages/TrainingApp";
 
 function AppRouter() {
   return (
-    <Router base={import.meta.env.PUBLIC_BASE_PATH || "/"}>
+    <Router base={import.meta.env.BASE_URL || "/"}>
       <Switch>
         <Route path="/" component={TrainingApp} />
         <Route component={NotFound} />
