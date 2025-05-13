@@ -73,7 +73,7 @@ jobs:
       - name: Static HTML export with Nuxt
         run: ${{ steps.detect-package-manager.outputs.manager }} run build
         env:
-          BASE_PATH: "/${{ github.event.repository.name }}"
+          PUBLIC_BASE_PATH: "/${{ github.event.repository.name }}"
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
